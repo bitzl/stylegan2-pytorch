@@ -291,7 +291,7 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
                         "g_optim": g_optim.state_dict(),
                         "d_optim": d_optim.state_dict(),
                     },
-                    f"{args.path}/checkpoint/{str(i).zfill(6)}.pt",
+                    f"{args.path}/checkpoints/{str(i).zfill(6)}.pt",
                 )
 
 
@@ -414,6 +414,6 @@ if __name__ == "__main__":
         wandb.init(project="stylegan 2")
 
     os.makedirs(f"{args.path}/sample", exist_ok=True)
-    os.makedirs(f"{args.path}/checkpoint", exist_ok=True)
+    os.makedirs(f"{args.path}/checkpoints", exist_ok=True)
 
     train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, device)
