@@ -413,7 +413,7 @@ if __name__ == "__main__":
     if get_rank() == 0 and wandb is not None and args.wandb:
         wandb.init(project="stylegan 2")
 
-    os.mkdir(f"{args.path}/sample", exists=True)
-    os.mkdir(f"{args.path}/checkpoint", exists=True)
+    os.makedirs(f"{args.path}/sample", exists_ok=True)
+    os.makedirs(f"{args.path}/checkpoint", exists_ok=True)
 
     train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, device)
