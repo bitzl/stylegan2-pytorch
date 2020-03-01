@@ -1,32 +1,33 @@
 import argparse
 import math
-import random
 import os
+import random
+from os.path import exists
 
 import numpy as np
 import torch
-from torch import nn, autograd, optim
+import torch.distributed as dist
+from torch import autograd, nn, optim
 from torch.nn import functional as F
 from torch.utils import data
-import torch.distributed as dist
 from torchvision import transforms, utils
 from tqdm import tqdm
+
+from dataset import MultiResolutionDataset
+from distributed import (
+    get_rank,
+    get_world_size,
+    reduce_loss_dict,
+    reduce_sum,
+    synchronize,
+)
+from model import Discriminator, Generator
 
 try:
     import wandb
 
 except ImportError:
     wandb = None
-
-from model import Generator, Discriminator
-from dataset import MultiResolutionDataset
-from distributed import (
-    get_rank,
-    synchronize,
-    reduce_loss_dict,
-    reduce_sum,
-    get_world_size,
-)
 
 
 def data_sampler(dataset, shuffle, distributed):
@@ -412,7 +413,7 @@ if __name__ == "__main__":
     if get_rank() == 0 and wandb is not None and args.wandb:
         wandb.init(project="stylegan 2")
 
-    os.mkdir(f"{args.path}/sample")
-    os.mkdir(f"{args.path}/checkpoint")
+    os.mkdir(f"{args.path}/sample", exists=True)
+    os.mkdir(f"{args.path}/checkpoint", exists=True)
 
     train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, device)
